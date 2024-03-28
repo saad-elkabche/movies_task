@@ -23,7 +23,7 @@ class ApiClientIml extends ApiClient{
     _dio=Dio()
     ..options=BaseOptions(
       baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 4),
+      connectTimeout: const Duration(seconds: 5),
       contentType: 'application/json',
       queryParameters: {
         'api_key':apiKey
@@ -54,7 +54,7 @@ class ApiClientIml extends ApiClient{
       List<MovieModel> movies=data.map((movieData)=>MovieModel.fromJson(movieData)).toList();
       return movies;
     }on DioException catch(ex){
-      if(ex.error is SocketException){
+      if(ex.error is SocketException || ex.type==DioExceptionType.connectionTimeout){
         throw NetworkException();
       }
       rethrow;

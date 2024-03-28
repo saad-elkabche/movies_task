@@ -41,12 +41,14 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
         return;
       }
       if(state.currentPage==0){
-       emit(state.copyWith(fetchingMoviesStatus: AppStatus.loading));
+       emit(state.copyWith(firstFetchStatus: AppStatus.loading));
       }
+      await Future.delayed(Duration(seconds: 3));
       int newCurrentPage=state.currentPage+1;
       List<MovieEntity> movies=state.movies ?? [];
       List<MovieEntity> nextMovies=await repository.getMovies(newCurrentPage);
-      await Future.delayed(Duration(seconds: 3));
+
+
 
       if(nextMovies.isEmpty){
         emit(state.copyWith(isMaxReached: true));
@@ -58,14 +60,27 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
         state.copyWith(
           movies: movies,
           currentPage: newCurrentPage,
-          fetchingMoviesStatus: AppStatus.success,
+          firstFetchStatus: AppStatus.success,
         )
       );
 
-    }on NetworkException catch(ex){
-      emit(state.copyWith(fetchingMoviesStatus: AppStatus.error,isConnectivityError: true));
     }catch(ex){
-      emit(state.copyWith(fetchingMoviesStatus: AppStatus.error,));
+      print("==========type===========${ex.runtimeType}");
+      if(state.movies?.isEmpty ?? true){
+        print('hello');
+        emit(state.copyWith(
+            firstFetchStatus: AppStatus.error,
+            isConnectivityError: ex is NetworkException,
+            error: ex.toString())
+        );
+      }else{
+        print('from');
+        emit(state.copyWith(
+            fetchingMoviesStatus: AppStatus.error,
+            isConnectivityError: ex is NetworkException,
+            error: ex.toString())
+        );
+      }
     }
   }
 }

@@ -2,7 +2,8 @@ part of 'movies_bloc.dart';
 
 class MoviesState {
 
-  AppStatus? fetchingMoviesStatus;
+  AppStatus? firstFetchStatus;
+  AppStatus? fetchMoviesStatus;
   String? error;
   List<MovieEntity>? movies;
   bool? isConnectivityError;
@@ -13,7 +14,8 @@ class MoviesState {
 
   MoviesState({
       required this.currentPage,
-      this.fetchingMoviesStatus,
+      this.firstFetchStatus,
+      this.fetchMoviesStatus,
       this.error,
       this.movies,
       this.isMaxReached,
@@ -21,17 +23,20 @@ class MoviesState {
 
 
   MoviesState copyWith({
+    AppStatus? firstFetchStatus,
     AppStatus? fetchingMoviesStatus,
     bool? isConnectivityError,
     bool? isMaxReached,
     String? error,
     int? currentPage,
     List<MovieEntity>? movies,}){
+
     return MoviesState(
       currentPage: currentPage ?? this.currentPage,
       error: error ?? this.error,
       isMaxReached: isMaxReached ?? this.isMaxReached,
-      fetchingMoviesStatus: fetchingMoviesStatus ?? this.fetchingMoviesStatus,
+      firstFetchStatus: firstFetchStatus ?? this.firstFetchStatus,
+      fetchMoviesStatus: fetchingMoviesStatus,
       isConnectivityError: isConnectivityError ,
       movies:movies ?? this.movies
     );

@@ -3,11 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_app/core/constants/app_colors/app_colors.dart';
+import 'package:movie_app/core/constants/app_images/app_images.dart';
+import 'package:movie_app/core/constants/enums/app_status.dart';
 import 'package:movie_app/core/dependencies/dependencies.dart';
 import 'package:movie_app/core/extensions/extension_on_app_status_enum.dart';
 import 'package:movie_app/domain/entities/movie_entity.dart';
 import 'package:movie_app/domain/repository/repository.dart';
 import 'package:movie_app/presentation/blocs/movies_bloc/movies_bloc.dart';
+import 'package:movie_app/presentation/ui/screens/movies_screen/components/message_widget.dart';
 import 'package:movie_app/presentation/ui/screens/movies_screen/components/movie_item.dart';
 import 'package:movie_app/routes.dart';
 
@@ -72,31 +75,45 @@ class _MoviesScreenState extends State<MoviesScreen> {
             fontWeight: FontWeight.bold,),
         ),
       ),
-      body: BlocBuilder<MoviesBloc,MoviesState>(
-        builder: (context,state){
-          if(state.fetchingMoviesStatus.isSuccess){
-            return ListView.builder(
-              itemCount: (state.isMaxReached ?? false)
-                  ?state.movies!.length
-                  :state.movies!.length+1,
-                controller: _scrollController,
-                itemBuilder: (context,index)=>index>=state.movies!.length
-                    ?MovieWidget(isLoading: true,)
-                    :MovieWidget(
-                  movie: state.movies!.elementAt(index),
-                  onMovieClick: _onMovieClick,
-                )
+      body: Column(
+        children: [
+          BlocListener<MoviesBloc,MoviesState>(
+              listener: _listenner,
+            child: const SizedBox(),
+          ),
+          Expanded(
+            child: BlocBuilder<MoviesBloc,MoviesState>(
+              builder: (context,state){
+                if(state.firstFetchStatus.isSuccess){
+                  return ListView.builder(
+                    itemCount: (state.isMaxReached ?? false)
+                        ?state.movies!.length
+                        :state.movies!.length+1,
+                      controller: _scrollController,
+                      itemBuilder: (context,index)=>index>=state.movies!.length
+                          ?MovieWidget(isLoading: true,)
+                          :MovieWidget(
+                        movie: state.movies!.elementAt(index),
+                        onMovieClick: _onMovieClick,
+                      )
 
-            );
-          }else if(state.fetchingMoviesStatus.isLoading){
-            return ListView(
-              children:List.generate(3, (index) => MovieWidget(isLoading: true,)),
-            );
-          }else if(state.fetchingMoviesStatus.isError){
-            return const Center(child: Text('error'),);
-          }
-          return const SizedBox();
-        },
+                  );
+                }else if(state.firstFetchStatus.isLoading){
+                  return ListView(
+                    children:List.generate(3, (index) => MovieWidget(isLoading: true,)),
+                  );
+                }else if(state.firstFetchStatus.isError){
+                  return MessageWidget(
+                      image:(state.isConnectivityError ?? false)
+                          ?AppImages.img_network
+                          :AppImages.img_error,
+                      message:  state.error ?? 'error');
+                  }
+                return const SizedBox();
+              },
+            ),
+          ),
+        ],
       )
     );
   }
@@ -124,4 +141,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
     return currentPosition>=(maxPosition*0.9);
   }
 
+
+  void _listenner(BuildContext context, MoviesState state) {
+    print('==============fetchMovi==================${state.fetchMoviesStatus}');
+    if(state.fetchMoviesStatus.isError){
+      print("show toast!!!");
+    }
+  }
 }
