@@ -75,7 +75,7 @@ class MovieWidget extends StatelessWidget {
           //fit: StackFit.expand,
           children: [
             CachedNetworkImage(
-                imageUrl: 'http://image.tmdb.org/t/p/original${movie!.backdropPath}',
+                imageUrl: movie!.fullBackDropPath,
               width: width*0.9,
               fit: BoxFit.fill,
               placeholder:(context,str)=> ShimmingWidget(

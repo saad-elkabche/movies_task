@@ -25,11 +25,7 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
 
 
 
-  EventTransformer<E> waiting<E>(Duration waitingDurating) {
-    return (events, mapper) {
-      return droppable<E>().call(events.throttle(waitingDurating), mapper);
-    };
-  }
+
 
 
 
@@ -43,7 +39,7 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       if(state.currentPage==0){
        emit(state.copyWith(firstFetchStatus: AppStatus.loading));
       }
-      await Future.delayed(Duration(seconds: 3));
+
       int newCurrentPage=state.currentPage+1;
       List<MovieEntity> movies=state.movies ?? [];
       List<MovieEntity> nextMovies=await repository.getMovies(newCurrentPage);
@@ -65,16 +61,16 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       );
 
     }catch(ex){
-      print("==========type===========${ex.runtimeType}");
+
       if(state.movies?.isEmpty ?? true){
-        print('hello');
+
         emit(state.copyWith(
             firstFetchStatus: AppStatus.error,
             isConnectivityError: ex is NetworkException,
             error: ex.toString())
         );
       }else{
-        print('from');
+
         emit(state.copyWith(
             fetchingMoviesStatus: AppStatus.error,
             isConnectivityError: ex is NetworkException,
@@ -82,5 +78,10 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
         );
       }
     }
+  }
+  EventTransformer<E> waiting<E>(Duration waitingDurating) {
+    return (events, mapper) {
+      return droppable<E>().call(events.throttle(waitingDurating), mapper);
+    };
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_app/core/constants/app_colors/app_colors.dart';
@@ -123,7 +124,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
   }
 
   void _onMovieClick(MovieEntity movie) {
-    GoRouter.of(context).go(Routes.single_movie,extra: movie);
+    GoRouter.of(context).push(Routes.single_movie,extra: movie);
   }
 
   void _onScroll() {
@@ -145,7 +146,17 @@ class _MoviesScreenState extends State<MoviesScreen> {
   void _listenner(BuildContext context, MoviesState state) {
     print('==============fetchMovi==================${state.fetchMoviesStatus}');
     if(state.fetchMoviesStatus.isError){
-      print("show toast!!!");
+      Fluttertoast.showToast(
+          msg:(state.isConnectivityError ?? false)
+              ? "Check Your network"
+              : "Error, try again",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.white,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
     }
   }
 }

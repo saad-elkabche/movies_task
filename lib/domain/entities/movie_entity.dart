@@ -3,6 +3,8 @@
 
 
 
+import 'package:intl/intl.dart';
+
 class MovieEntity {
   bool? adult;
   String? backdropPath;
@@ -36,6 +38,15 @@ class MovieEntity {
     this.voteCount,
   });
 
+
+  String get fullBackDropPath{
+    return 'http://image.tmdb.org/t/p/original${backdropPath}';
+  }
+
+  String get formatedReleasDate{
+    DateFormat dateFormat=DateFormat('MM-dd-yyyy');
+    return dateFormat.format(releaseDate!);
+  }
 
 
 
