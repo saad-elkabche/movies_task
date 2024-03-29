@@ -22,16 +22,18 @@ class SignleMovieScreen extends StatelessWidget {
     double height=MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
-      body:Column(
-        children: [
-          ImageWidget(url: movieEntity.fullBackDropPath,
-              height: height*0.45,
-              width: width,
-            onBackClicked: ()=>onBackClick(context),
-          ),
-          _title(),
-          _desciption(),
-        ],
+      body:SingleChildScrollView(
+        child: Column(
+          children: [
+            ImageWidget(url: movieEntity.fullBackDropPath,
+                height: height*0.45,
+                width: width,
+              onBackClicked: ()=>onBackClick(context),
+            ),
+            _title(),
+            _desciption(),
+          ],
+        ),
       )
     );
   }

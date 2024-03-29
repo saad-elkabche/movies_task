@@ -40,6 +40,7 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
        emit(state.copyWith(firstFetchStatus: AppStatus.loading));
       }
 
+
       int newCurrentPage=state.currentPage+1;
       List<MovieEntity> movies=state.movies ?? [];
       List<MovieEntity> nextMovies=await repository.getMovies(newCurrentPage);
